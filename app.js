@@ -17,15 +17,15 @@ app.use((req, res, next) => {
 });
 
 app.use('/users', userRoutes);
-app.listen(process.env.PORT || 3000);
+// app.listen(process.env.PORT || 3000);
 
-// mongoose
-//   .connect(
-//     `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.8zuvkr1.mongodb.net/?retryWrites=true&w=majority`
-//   )
-//   .then((result) => {
-//     app.listen(process.env.PORT || 3000);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.8zuvkr1.mongodb.net/?retryWrites=true&w=majority`
+  )
+  .then((result) => {
+    app.listen(process.env.PORT || 3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
