@@ -2,11 +2,19 @@ const { validationResult } = require('express-validator');
 
 const User = require('../models/user');
 
-exports.getUser = (req, res, next) => {
-  res.status(200).json({
-    firstName: 'firstName',
-    lastName: 'lastName',
-  });
+exports.getUser = async (req, res, next) => {
+  const userId = req.params.userId;
+  try {
+    const user = await User.findById(userId);
+    res.status(200).json({
+      user: user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Something went wrong',
+    });
+  }
 };
 
 exports.createUser = async (req, res, next) => {
@@ -35,8 +43,8 @@ exports.createUser = async (req, res, next) => {
       message: 'User created successfully',
       result,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       message: 'Something went wrong',
     });

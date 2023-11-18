@@ -15,6 +15,6 @@ router.post(
   ],
   userController.createUser
 );
-router.get('/:id', userController.getUser);
+router.get('/:userId', userController.getUser);
 
 module.exports = router;
