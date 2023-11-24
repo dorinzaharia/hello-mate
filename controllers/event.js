@@ -1,11 +1,12 @@
 const { validationResult } = require('express-validator');
 
 const Event = require('../models/event');
+const User = require('../models/user');
 
 exports.getEvents = async (req, res, next) => {
   try {
     const events = await Event.find();
-    console.log(events)
+    console.log(events);
     res.status(200).json({
       events: events,
     });
@@ -25,32 +26,24 @@ exports.createEvent = async (req, res, next) => {
       errors: errors.array(),
     });
   }
-  const title = req.body.title;
-  const description = req.body.description;
-  const time = req.body.time;
-  const date = req.body.date;
-  const location = req.body.location;
-  const venueId = req.body.venueId;
-  const price = req.body.price;
-  const numberOfPlayers = req.body.numberOfPlayers;
-  const numberOfPlayersPerTeam = req.body.numberOfPlayersPerTeam;
 
+  console.log(req.body);
   const event = new Event({
-    title: title,
-    description: description,
-    time: time,
-    date: date,
-    location: location,
-    venueId: venueId,
-    price: price,
-    numberOfPlayers: numberOfPlayers,
-    numberOfPlayersPerTeam: numberOfPlayersPerTeam,
+    title: req.body.title,
+    description: req.body.description,
+    time: req.body.time,
+    date: req.body.date,
+    creatorId: req.userId,
   });
   try {
-    const result = await event.save();
+    const createdEvent = await event.save();
+    const user = await User.findById(req.userId);
+    user.events.push(event);
+    await user.save();
     res.status(201).json({
       message: 'Event created successfully',
-      result,
+      event: createdEvent,
+      creator: user,
     });
   } catch (error) {
     console.log(error);

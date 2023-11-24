@@ -20,6 +20,11 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
+    creatorId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     // location: {
     //   type: String,
     //   required: true,

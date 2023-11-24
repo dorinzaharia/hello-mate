@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema(
   {
     firstName: {
-      type: String
+      type: String,
     },
     lastName: {
       type: String,
@@ -25,6 +25,11 @@ const userSchema = new Schema(
     bio: {
       type: String,
     },
+    events: [
+      {
+        attendanceType: { type: String, enum: ['organizer', 'host', 'player'], default: 'organizer', required: true },
+      },
+    ],
   },
   { timestamp: true }
 );
