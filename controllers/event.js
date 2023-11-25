@@ -52,3 +52,25 @@ exports.createEvent = async (req, res, next) => {
     });
   }
 };
+
+exports.deleteEvent = async (req, res, next) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      const error = new Error('Event not found');
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    await Event.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: 'Event deleted successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    const err = new Error('Something went wrong');
+    err.statusCode = 500;
+    return next(err);
+  }
+};

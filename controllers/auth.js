@@ -11,7 +11,7 @@ exports.signup = async (req, res, next) => {
     const error = new Error('Validation failed.');
     error.statusCode = 422;
     error.data = errors.array();
-    next(error);
+    return next(error);
   }
 
   try {
@@ -23,14 +23,11 @@ exports.signup = async (req, res, next) => {
     });
     const resultData = await user.save();
 
-    console.log(resultData);
-
     res.status(201).json({ id: resultData._id.toString(), email: resultData.email, username: resultData.username });
   } catch (error) {
-    console.log(error);
     const err = new Error('Something went wrong.');
     err.statusCode = 500;
-    next(err);
+    return next(err);
   }
 };
 
@@ -45,30 +42,27 @@ exports.login = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ email: req.body.email });
-    console.log(user);
     if (!user) {
       const error = new Error('User not found.');
       error.statusCode = 401;
-      next(error);
+      return next(error);
     }
 
-    const isEqual = bcrypt.compare(req.body.password, user.password);
+    const isEqual = await bcrypt.compare(req.body.password, user.password);
+    console.log(isEqual);
 
     if (!isEqual) {
-      if (!user) {
-        const error = new Error('Wrong password.');
-        error.statusCode = 401;
-        next(error);
-      }
+      const error = new Error('Wrong password.');
+      error.statusCode = 401;
+      return next(error);
     }
     const token = jwt.sign({ email: user.email, userId: user._id.toString() }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
     res.status(200).json({ userId: user._id.toString(), token });
   } catch (error) {
-    console.log(error);
     const err = new Error('Something went wrong.');
     err.statusCode = 500;
-    next(err);
+    return next(err);
   }
 };
