@@ -15,6 +15,12 @@ exports.signup = async (req, res, next) => {
   }
 
   try {
+    const dbUser = await User.findOne({ email: req.body.email });
+    if (dbUser) {
+      const error = new Error('Validation failed. User already exists.');
+      error.statusCode = 422;
+      return next(error);
+    }
     const hashedPassword = await bcrypt.hash(req.body.password, 12);
     const user = new User({
       email: req.body.email,
