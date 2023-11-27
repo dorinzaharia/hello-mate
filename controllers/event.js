@@ -6,12 +6,10 @@ const User = require('../models/user');
 exports.getEvents = async (req, res, next) => {
   try {
     const events = await Event.find();
-    console.log(events);
     res.status(200).json({
       events: events,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       message: 'Something went wrong',
     });
@@ -27,7 +25,6 @@ exports.createEvent = async (req, res, next) => {
     });
   }
 
-  console.log(req.body);
   const event = new Event({
     title: req.body.title,
     description: req.body.description,
@@ -46,7 +43,6 @@ exports.createEvent = async (req, res, next) => {
       creator: user,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       message: 'Something went wrong',
     });
@@ -63,6 +59,10 @@ exports.deleteEvent = async (req, res, next) => {
     }
 
     await Event.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.userId);
+    console.log(user);
+    user.events.pull(req.params.id);
+    await user.save();
 
     res.status(200).json({
       message: 'Event deleted successfully',

@@ -13,8 +13,9 @@ module.exports = (req, res, next) => {
   try {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
-    const err = new Error('Something went wrong.');
-    err.statusCode = 500;
+    console.log(error);
+    const err = new Error('Token expired.');
+    err.statusCode = 401;
     throw err;
   }
   if (!decodedToken) {
@@ -22,7 +23,6 @@ module.exports = (req, res, next) => {
     err.statusCode = 401;
     throw err;
   }
-  console.log(decodedToken);
   req.userId = decodedToken.userId;
   next();
 };
